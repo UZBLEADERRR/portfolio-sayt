@@ -46,42 +46,44 @@ export default function BottomNavbar() {
     <>
       {/* Mobile Bottom Nav */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
-        <div className="pointer-events-auto glass-panel border-t border-[#9B6DFF]/20 px-1 pb-2 pt-1" style={{ boxShadow: '0 -8px 30px rgba(155,109,255,0.2)' }}>
-          <div className="flex items-center justify-between relative max-w-sm mx-auto px-1">
+        <div className="pointer-events-auto glass-panel border-t border-[#9B6DFF]/20 px-0.5 pb-2 pt-1" style={{ boxShadow: '0 -8px 30px rgba(155,109,255,0.2)' }}>
+          <div className="flex items-center justify-between relative w-full max-w-sm mx-auto">
             {/* Left icons */}
-            <div className="flex items-center justify-around flex-1">
+            <div className="flex items-center justify-around flex-1 gap-0">
               {leftIcons.map((item, i) => (
                 <button
                   key={'l'+i}
                   onClick={() => handleNavClick(item.panelId)}
-                  className="flex flex-col items-center gap-0 py-1.5 px-1.5 rounded-xl transition-all relative min-w-[50px]"
+                  className="flex flex-col items-center flex-1 min-w-0 py-1.5 px-0.5 rounded-xl transition-all relative"
                 >
-                  <item.icon className={`w-[18px] h-[18px] transition-colors ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_8px_rgba(196,161,255,0.8)]' : 'text-white/50'}`} />
-                  <span className={`text-[8px] font-bold uppercase tracking-tighter ${activePanel === item.panelId ? 'text-[#C4A1FF]' : 'text-white/40'}`}>{item.label}</span>
-                  {activePanel === item.panelId && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 rounded-full bg-[#9B6DFF] shadow-[0_0_8px_#9B6DFF]" />}
+                  <item.icon className={`w-4 h-4 transition-colors ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_8px_rgba(196,161,255,0.8)]' : 'text-white/50'}`} />
+                  <span className={`text-[7px] font-bold uppercase tracking-tighter truncate w-full text-center ${activePanel === item.panelId ? 'text-[#C4A1FF]' : 'text-white/40'}`}>{item.label}</span>
+                  {activePanel === item.panelId && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-[1px] rounded-full bg-[#9B6DFF] shadow-[0_0_8px_#9B6DFF]" />}
                 </button>
               ))}
             </div>
 
             {/* Center button */}
-            <button
-              onClick={() => togglePanel('video')}
-              className="w-12 h-12 -mt-6 rounded-full bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_30px_rgba(155,109,255,0.6)] border-2 border-[#C4A1FF]/30 flex-shrink-0 z-10 mx-1"
-            >
-              <Hexagon className="w-5 h-5 text-white fill-white/20" />
-            </button>
+            <div className="px-1">
+              <button
+                onClick={() => togglePanel('video')}
+                className="w-10 h-10 -mt-6 rounded-full bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_30px_rgba(155,109,255,0.6)] border-2 border-[#C4A1FF]/30 flex-shrink-0 z-10"
+              >
+                <Hexagon className="w-4 h-4 text-white fill-white/20" />
+              </button>
+            </div>
 
             {/* Right icons */}
-            <div className="flex items-center justify-around flex-1">
+            <div className="flex items-center justify-around flex-1 gap-0">
               {rightIcons.map((item, i) => (
                 <button
                   key={'r'+i}
                   onClick={() => handleNavClick(item.panelId)}
-                  className="flex flex-col items-center gap-0 py-1.5 px-1.5 rounded-xl transition-all relative min-w-[50px]"
+                  className="flex flex-col items-center flex-1 min-w-0 py-1.5 px-0.5 rounded-xl transition-all relative"
                 >
-                  <item.icon className={`w-[18px] h-[18px] transition-colors ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_8px_rgba(196,161,255,0.8)]' : 'text-white/50'}`} />
-                  <span className={`text-[8px] font-bold uppercase tracking-tighter ${activePanel === item.panelId ? 'text-[#C4A1FF]' : 'text-white/40'}`}>{item.label}</span>
-                  {activePanel === item.panelId && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 rounded-full bg-[#9B6DFF] shadow-[0_0_8px_#9B6DFF]" />}
+                  <item.icon className={`w-4 h-4 transition-colors ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_8px_rgba(196,161,255,0.8)]' : 'text-white/50'}`} />
+                  <span className={`text-[7px] font-bold uppercase tracking-tighter truncate w-full text-center ${activePanel === item.panelId ? 'text-[#C4A1FF]' : 'text-white/40'}`}>{item.label}</span>
+                  {activePanel === item.panelId && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-[1px] rounded-full bg-[#9B6DFF] shadow-[0_0_8px_#9B6DFF]" />}
                 </button>
               ))}
             </div>
