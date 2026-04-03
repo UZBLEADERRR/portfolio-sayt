@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Sphere, Ring } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Sphere, Ring, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useUI } from '../context/UIContext';
 import type { PanelType } from '../context/UIContext';
@@ -225,33 +225,6 @@ function NebulaCloud({ position, color, scale }: { position: [number, number, nu
   );
 }
 
-// Mouse parallax camera rig — moves scene with mouse
-function MouseParallax() {
-  const { camera } = useThree();
-  const mouseRef = useRef({ x: 0, y: 0 });
-  const targetRef = useRef({ x: 0, y: 15, z: 20 });
-
-  React.useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current.x = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouseRef.current.y = (e.clientY / window.innerHeight - 0.5) * 2;
-    };
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  useFrame(() => {
-    targetRef.current.x = mouseRef.current.x * 5;
-    targetRef.current.y = 15 - mouseRef.current.y * 3;
-    
-    camera.position.x += (targetRef.current.x - camera.position.x) * 0.03;
-    camera.position.y += (targetRef.current.y - camera.position.y) * 0.03;
-    camera.lookAt(0, 0, 0);
-  });
-
-  return null;
-}
-
 function SolarSystem({ onPlanetClick }: { onPlanetClick: (panelId: PanelType) => void }) {
   const sunRef = useRef<THREE.Mesh>(null);
   
@@ -307,7 +280,19 @@ export default function HeroSystem() {
         <fog attach="fog" args={['#0a0515', 50, 200]} />
         <TwinklingStars />
         <SolarSystem onPlanetClick={setActivePanel} />
-        <MouseParallax />
+        
+        <OrbitControls 
+          enableDamping 
+          dampingFactor={0.05} 
+          rotateSpeed={0.4} 
+          minDistance={10} 
+          maxDistance={60} 
+          maxPolarAngle={Math.PI / 1.8} 
+          minPolarAngle={Math.PI / 6}
+          enablePan={true}
+          panSpeed={0.5}
+          makeDefault
+        />
       </Canvas>
     </div>
   );

@@ -23,34 +23,35 @@ export default function TopNavbar() {
 
   return (
     <>
-      <div className="fixed top-2 md:top-5 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-full max-w-5xl h-[60px] md:h-[70px] rounded-[30px] md:rounded-[40px] glass-panel flex items-center justify-between px-4 md:px-6 shadow-[0_0_25px_rgba(155,109,255,0.3)] z-50">
+      <div className="fixed top-2 md:top-5 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-full max-w-5xl h-[54px] md:h-[70px] rounded-[24px] md:rounded-[40px] glass-panel flex items-center justify-between px-3 md:px-6 shadow-[0_0_25px_rgba(155,109,255,0.3)] z-50">
         {/* Left — Logo */}
         <button 
           onClick={() => setActivePanel('none')}
-          className="px-4 md:px-6 py-1.5 md:py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors border border-white/10 text-xs md:text-sm font-medium tracking-wide"
+          className="px-3 md:px-6 py-1.5 md:py-2 rounded-xl md:rounded-full bg-white/10 hover:bg-white/20 transition-colors border border-white/10 text-[10px] md:text-sm font-bold tracking-tight uppercase"
         >
-          Portfolio
+          <span className="md:hidden">CV</span>
+          <span className="hidden md:inline">Portfolio</span>
         </button>
 
         {/* Center — SARVAR.GPT */}
-        <div className="flex-1 flex justify-center">
+        <div className="flex-1 flex justify-center overflow-hidden">
           <div className="relative">
-            <h1 className="text-lg md:text-xl font-black tracking-wider bg-gradient-to-r from-[#9B6DFF] via-[#C4A1FF] to-[#7B61FF] bg-clip-text text-transparent animate-gradient bg-[length:200%_200%] select-none">
+            <h1 className="text-sm md:text-xl font-black tracking-[0.2em] md:tracking-wider bg-gradient-to-r from-[#9B6DFF] via-[#C4A1FF] to-[#7B61FF] bg-clip-text text-transparent animate-gradient bg-[length:200%_200%] select-none whitespace-nowrap">
               SARVAR.GPT
             </h1>
-            <div className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#9B6DFF] to-transparent opacity-60" />
+            <div className="absolute -bottom-1 left-0 right-0 h-[1px] md:h-[2px] bg-gradient-to-r from-transparent via-[#9B6DFF] to-transparent opacity-40 md:opacity-60" />
           </div>
         </div>
 
         {/* Right — Tarmoqlar button */}
-        <div className="flex items-center gap-3 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <button 
             onClick={toggleSocialPanel}
-            className="px-4 md:px-6 py-1.5 md:py-2 rounded-full bg-gradient-to-r from-[#7B61FF] to-[#9B6DFF] hover:opacity-90 transition-opacity text-xs md:text-sm font-medium shadow-[0_0_20px_rgba(155,109,255,0.5)] whitespace-nowrap"
+            className="px-3 md:px-6 py-1.5 md:py-2 rounded-xl md:rounded-full bg-gradient-to-r from-[#7B61FF] to-[#9B6DFF] hover:opacity-90 transition-opacity text-[10px] md:text-sm font-bold shadow-[0_0_20px_rgba(155,109,255,0.4)] whitespace-nowrap uppercase"
           >
             {t('connect')}
           </button>
-          <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#C4A1FF] shadow-[0_0_10px_#C4A1FF] animate-pulse" />
+          <div className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full bg-[#C4A1FF] shadow-[0_0_10px_#C4A1FF] animate-pulse shrink-0" />
         </div>
       </div>
 
