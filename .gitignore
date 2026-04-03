@@ -6,3 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
+admin-panel/node_modules/
+admin-panel/dist/
