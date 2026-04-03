@@ -47,11 +47,18 @@ export async function initDB() {
     await pool.query(`INSERT INTO admin_credentials (username, password) VALUES ('admin', 'sarvar2024')`);
   }
 
-  // Ensure 'stats' has at least one item so sidebar doesn't "disappear"
-  const stats = await pool.query("SELECT * FROM portfolio_data WHERE key = 'stats'");
-  if (stats.rows.length === 0 || (stats.rows[0].value && JSON.parse(JSON.stringify(stats.rows[0].value)).length === 0)) {
+  // Initial stats for sidebar
+  const statsResult = await pool.query("SELECT * FROM portfolio_data WHERE key = 'stats'");
+  const currentStats = statsResult.rows[0]?.value || [];
+  
+  // If no stats or just few demo stats, populate with a rich set
+  if (currentStats.length < 3) {
      const defaultStats = [
-       { id: '1', value: '10+', label: 'Loyihalar', icon: 'FolderKanban', details: ['React loyihalar', 'Mobile ilovalar'] }
+       { id: '1', value: '15+', label: 'Loyihalar', icon: 'FolderKanban', details: ['SaaS platformalar', 'E-commerce', 'Dashboardlar'] },
+       { id: '2', value: '3+', label: 'Tajriba', icon: 'Briefcase', details: ['Frontend (React)', 'Fullstack (Node.js)'] },
+       { id: '3', value: '50+', label: 'Mijozlar', icon: 'Users', details: ['Xalqaro mijozlar', 'Mahalliy autsors'] },
+       { id: '4', value: '12+', label: 'Sertifikatlar', icon: 'Award', details: ['Google Cloud', 'Meta Frontend', 'AWS'] },
+       { id: '5', value: '24/7', label: 'Kodlash', icon: 'Clock', details: ['Doimiy o\'rganish', 'Yangi texnologiyalar'] }
      ];
      await setData('stats', defaultStats);
   }

@@ -62,9 +62,18 @@ export const store = {
     } catch { return false; }
   },
   
-  isAuthenticated: (): boolean => sessionStorage.getItem('admin_auth') === 'true',
+  isAuthenticated: (): boolean => {
+    try {
+      return sessionStorage.getItem('admin_auth') === 'true';
+    } catch { return false; }
+  },
   setAuth: (val: boolean) => {
-    if (!val) { sessionStorage.removeItem('admin_auth'); sessionStorage.removeItem('admin_creds'); }
+    try {
+      if (!val) { 
+        sessionStorage.removeItem('admin_auth'); 
+        sessionStorage.removeItem('admin_creds'); 
+      }
+    } catch (err) { console.error('Auth storage error:', err); }
   },
 
   // Data accessors
