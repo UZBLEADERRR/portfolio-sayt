@@ -41,10 +41,13 @@ export async function initDB() {
     );
   `);
 
-  // Insert default credentials if not exists
+  // Ensure administrative credentials are correct
   const creds = await pool.query('SELECT * FROM admin_credentials');
   if (creds.rows.length === 0) {
     await pool.query(`INSERT INTO admin_credentials (username, password) VALUES ('admin', 'sarvar2024')`);
+  } else {
+    // Force reset for now to ensure the user can log in
+    await pool.query(`UPDATE admin_credentials SET username = 'admin', password = 'sarvar2024' WHERE id = (SELECT id FROM admin_credentials LIMIT 1)`);
   }
 
   // Initial stats for sidebar
