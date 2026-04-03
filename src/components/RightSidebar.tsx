@@ -58,44 +58,58 @@ function AIChatPanel({ isMobile = false }: { isMobile?: boolean }) {
     if (input.trim()) { sendMessage(input.trim()); setInput(''); }
   };
 
+  const formatContent = (content: string) => {
+    // Simple bold formatter that strips ** and wraps in <b> for better look
+    const parts = content.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="text-[#C4A1FF] font-black">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
+
   const baseClass = isMobile 
-    ? "fixed right-24 top-24 w-[calc(100vw-110px)] h-[60vh] glass-panel rounded-2xl p-4 pointer-events-auto flex flex-col"
-    : "w-[380px] h-[65vh] glass-panel rounded-[30px] p-6 pointer-events-auto flex flex-col relative";
+    ? "fixed right-16 top-24 w-[calc(100vw-80px)] h-[65vh] glass-panel rounded-2xl p-4 pointer-events-auto flex flex-col"
+    : "w-[550px] h-[70vh] glass-panel rounded-[40px] p-8 pointer-events-auto flex flex-col relative";
 
   return (
     <motion.div key="ai"
-      initial={isMobile ? { opacity: 0, x: 20 } : { opacity: 0, scale: 0.9, x: 20, filter: 'blur(10px)' }}
+      initial={isMobile ? { opacity: 0, x: 20 } : { opacity: 0, scale: 0.95, x: 40, filter: 'blur(15px)' }}
       animate={isMobile ? { opacity: 1, x: 0 } : { opacity: 1, scale: 1, x: 0, filter: 'blur(0px)' }}
-      exit={isMobile ? { opacity: 0, x: 20 } : { opacity: 0, scale: 0.9, x: 20, filter: 'blur(10px)' }}
-      transition={{ duration: 0.3, type: 'spring', bounce: 0.4 }}
+      exit={isMobile ? { opacity: 0, x: 20 } : { opacity: 0, scale: 0.9, x: 40, filter: 'blur(15px)' }}
+      transition={{ duration: 0.4, type: 'spring', damping: 20 }}
       className={baseClass}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_15px_rgba(155,109,255,0.4)]">
-            <Bot className="text-white" size={20} />
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_20px_rgba(155,109,255,0.5)]">
+            <Bot className="text-white" size={24} />
           </div>
-          <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-white`}>SARVAR.GPT</h3>
+          <div>
+            <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-black text-white tracking-tight`}>SARVAR.GPT</h3>
+            <p className="text-[10px] text-[#C4A1FF] uppercase font-bold tracking-widest opacity-60">AI Assistant</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={clearChat} className="text-white/30 hover:text-white/60 transition-colors"><Trash2 size={16} /></button>
-          <button onClick={() => setActivePanel('none')} className="text-white/50 hover:text-white"><X size={20} /></button>
+        <div className="flex items-center gap-3">
+          <button onClick={clearChat} className="p-2 rounded-xl bg-white/5 text-white/30 hover:text-[#FF4F6D] hover:bg-[#FF4F6D]/10 transition-all"><Trash2 size={18} /></button>
+          <button onClick={() => setActivePanel('none')} className="p-2 rounded-xl bg-white/5 text-white/50 hover:text-white transition-all"><X size={22} /></button>
         </div>
       </div>
       
-      <div className="flex-1 bg-black/20 rounded-2xl p-4 mb-4 overflow-y-auto border border-[#9B6DFF]/10 flex flex-col gap-3 custom-scrollbar">
-        <div className="bg-gradient-to-r from-[#7B61FF]/20 to-[#9B6DFF]/10 border border-[#9B6DFF]/20 p-3 rounded-2xl rounded-tl-none self-start max-w-[85%]">
-          <p className="text-sm text-white/90">{t('aiGreeting')}</p>
+      <div className="flex-1 bg-black/30 rounded-[24px] p-5 mb-5 overflow-y-auto border border-white/5 flex flex-col gap-4 custom-scrollbar">
+        <div className="bg-gradient-to-r from-[#7B61FF]/20 to-[#9B6DFF]/10 border border-[#9B6DFF]/20 p-4 rounded-3xl rounded-tl-none self-start max-w-[90%]">
+          <p className="text-sm text-white/90 leading-relaxed">{t('aiGreeting')}</p>
         </div>
 
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
+            <div className={`max-w-[90%] p-4 rounded-3xl text-[15px] leading-relaxed shadow-sm ${
               msg.role === 'user' 
-                ? 'bg-[#9B6DFF]/30 border border-[#9B6DFF]/30 rounded-tr-none text-white' 
-                : 'bg-gradient-to-r from-[#7B61FF]/20 to-[#9B6DFF]/10 border border-[#9B6DFF]/20 rounded-tl-none text-white/90'
+                ? 'bg-[#9B6DFF]/40 border border-[#9B6DFF]/40 rounded-tr-none text-white' 
+                : 'bg-white/5 border border-white/10 rounded-tl-none text-white/90'
             }`}>
-              <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+              <p className="whitespace-pre-wrap break-words">{formatContent(msg.content)}</p>
             </div>
           </div>
         ))}

@@ -121,12 +121,20 @@ router.post('/chat', async (req, res) => {
     
     // Get AI settings from DB
     const aiSettings = await getData('ai_settings');
-    const systemPrompt = aiSettings?.systemPrompt || 'Sen Sarvarning AI yordamchisisan.';
+    const basePrompt = aiSettings?.systemPrompt || 'Sen Sarvarning AI yordamchisishan.';
     const knowledgeBase = aiSettings?.knowledgeBase || '';
     
-    const fullPrompt = knowledgeBase 
-      ? `${systemPrompt}\n\nQo'shimcha bilim bazasi:\n${knowledgeBase}` 
-      : systemPrompt;
+    // Explicit instructions to avoid Markdown symbols and be more detailed
+    const formatInstructions = `
+MUHIM KO'RSATMALAR:
+1. Javob berishda Markdown belgilaridan (**, ##, *, __) ASLO FOYDALANMA. 
+2. Muhim so'zlarni ajratib ko'rsatish uchun ularni KATTA HARFLAR bilan yozishing yoki shunchaki yoniga emoji qo'yishing mumkin.
+3. Javoblaring judayam batafsil, "kengroq" va tushunarli bo'lsin. Qisqa javob berma.
+4. Emojilardan o'rinli va ko'p foydalan. 
+5. Har doim do'stona va professional tonni saqlab qol.
+`;
+
+    const fullPrompt = `${basePrompt}\n${formatInstructions}\n\nQo'shimcha bilim bazasi:\n${knowledgeBase}`;
 
     const contents = [
       { role: 'user', parts: [{ text: fullPrompt }] },
