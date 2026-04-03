@@ -15,28 +15,25 @@ export default function LeftSidebar() {
     }
   }, [activePanel]);
 
-  // Read stats from localStorage (admin panel writes here)
+  // Fetch stats from API
   const iconMap: Record<string, typeof Briefcase> = { Briefcase, FolderKanban, Users, Award };
-  const storedStats = (() => {
-    try {
-      const s = localStorage.getItem('admin_stats');
-      return s ? JSON.parse(s) : null;
-    } catch { return null; }
-  })();
+  const [stats, setStats] = useState<any[]>([]);
 
-  const stats = storedStats 
-    ? storedStats.map((s: any) => ({
-        icon: iconMap[s.icon] || Briefcase,
-        value: s.value,
-        label: s.label,
-        details: s.details || [],
-      }))
-    : [
-        { icon: Briefcase, value: '3+', label: t('yearsExp'), details: t('stat1Desc').split(', ') },
-        { icon: FolderKanban, value: '15+', label: t('projectsCount'), details: t('stat2Desc').split(', ') },
-        { icon: Users, value: '8+', label: t('clients'), details: t('stat3Desc').split(', ') },
-        { icon: Award, value: '4', label: t('certs'), details: t('stat4Desc').split(', ') },
-      ];
+  useEffect(() => {
+    fetch('/api/data/stats')
+      .then(r => r.ok ? r.json() : [])
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setStats(data.map((s: any) => ({
+            icon: iconMap[s.icon] || Briefcase,
+            value: s.value,
+            label: s.label,
+            details: s.details || [],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleStatClick = (i: number) => {
     if (activeStatId === i && activePanel === 'left-stats') {

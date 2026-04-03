@@ -148,14 +148,14 @@ export default function BottomNavbar() {
               <X size={20} />
             </button>
 
-            <div className="w-full h-[250px] md:h-[400px] rounded-2xl overflow-hidden border border-[#9B6DFF]/20 shadow-[0_0_30px_rgba(155,109,255,0.3)] relative">
+            <div className="w-full h-[250px] md:h-[400px] rounded-2xl overflow-hidden border border-[#9B6DFF]/20 shadow-[0_0_30px_rgba(155,109,255,0.3)] relative bg-black">
               <video 
                 src="/3d_avatarim.mp4" 
                 autoPlay 
                 loop 
                 muted 
                 playsInline
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
           </motion.div>

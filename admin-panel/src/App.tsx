@@ -4,8 +4,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import ResumeManager from './pages/ResumeManager';
-import ProjectsManager from './pages/ProjectsManager';
-import { ServicesManager, CoursesManager, BlogManager, StatsManager, SocialsManager } from './pages/Managers';
+import { ProjectsManager, ServicesManager, CoursesManager, BlogManager, StatsManager, SocialsManager } from './pages/Managers';
 import { AISettingsPage, ChatHistoryPage } from './pages/AIPages';
 
 export default function App() {
@@ -33,7 +32,7 @@ export default function App() {
     <Layout
       activePage={activePage}
       onNavigate={setActivePage}
-      onLogout={() => setIsAuth(false)}
+      onLogout={() => { store.setAuth(false); setIsAuth(false); }}
     >
       {pages[activePage] || <Dashboard />}
     </Layout>
