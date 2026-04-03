@@ -9,7 +9,6 @@ export default function LeftSidebar() {
   const { t } = useLanguage();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Close local mobile menu if another panel opens
   useEffect(() => {
     if (activePanel !== 'left-stats') {
       setIsMobileOpen(false);
@@ -37,15 +36,15 @@ export default function LeftSidebar() {
     <>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex fixed left-5 top-1/2 -translate-y-1/2 z-40 items-center gap-6 pointer-events-none">
-        <div className="w-[90px] h-[70vh] rounded-[30px] glass-panel flex flex-col items-center justify-evenly py-6 pointer-events-auto shadow-[0_0_20px_rgba(79,124,255,0.1)]">
+        <div className="w-[90px] h-[70vh] rounded-[30px] glass-panel flex flex-col items-center justify-evenly py-6 pointer-events-auto shadow-[0_0_20px_rgba(155,109,255,0.15)]">
           {stats.map((stat, i) => (
             <div 
               key={i} 
               onClick={() => handleStatClick(i)}
               className="flex flex-col items-center gap-2 group cursor-pointer"
             >
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${activeStatId === i && activePanel === 'left-stats' ? 'bg-[#4F7CFF]/20 border-[#4F7CFF] shadow-[0_0_15px_rgba(79,124,255,0.5)]' : 'bg-white/5 border-white/10 group-hover:border-[#4F7CFF]/50 group-hover:shadow-[0_0_15px_rgba(79,124,255,0.3)]'}`}>
-                <stat.icon className={`w-5 h-5 transition-colors ${activeStatId === i && activePanel === 'left-stats' ? 'text-[#00D1FF]' : 'text-[#4F7CFF] group-hover:text-[#00D1FF]'}`} />
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${activeStatId === i && activePanel === 'left-stats' ? 'bg-[#9B6DFF]/20 border-[#9B6DFF] shadow-[0_0_15px_rgba(155,109,255,0.5)]' : 'bg-white/5 border-white/10 group-hover:border-[#9B6DFF]/50 group-hover:shadow-[0_0_15px_rgba(155,109,255,0.3)]'}`}>
+                <stat.icon className={`w-5 h-5 transition-colors ${activeStatId === i && activePanel === 'left-stats' ? 'text-[#C4A1FF]' : 'text-[#9B6DFF] group-hover:text-[#C4A1FF]'}`} />
               </div>
               <div className="text-center">
                 <div className="text-sm font-bold text-white">{stat.value}</div>
@@ -72,12 +71,12 @@ export default function LeftSidebar() {
               </button>
               
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-[#4F7CFF]/20 border border-[#4F7CFF]/50 flex items-center justify-center text-[#00D1FF]">
+                <div className="w-12 h-12 rounded-2xl bg-[#9B6DFF]/20 border border-[#9B6DFF]/50 flex items-center justify-center text-[#C4A1FF]">
                   {React.createElement(stats[activeStatId].icon, { size: 24 })}
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">{stats[activeStatId].label}</h3>
-                  <p className="text-sm text-[#4F7CFF]">{stats[activeStatId].value} {t('statIndicator')}</p>
+                  <p className="text-sm text-[#9B6DFF]">{stats[activeStatId].value} {t('statIndicator')}</p>
                 </div>
               </div>
 
@@ -88,11 +87,11 @@ export default function LeftSidebar() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 + 0.2 }}
-                    className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer group"
+                    className="p-4 rounded-2xl bg-white/5 border border-[#9B6DFF]/10 hover:bg-white/10 hover:border-[#9B6DFF]/20 transition-all cursor-pointer group"
                   >
-                    <div className="w-2 h-2 rounded-full bg-[#4F7CFF] mb-2 group-hover:bg-[#00D1FF] group-hover:shadow-[0_0_10px_#00D1FF] transition-all" />
+                    <div className="w-2 h-2 rounded-full bg-[#9B6DFF] mb-2 group-hover:bg-[#C4A1FF] group-hover:shadow-[0_0_10px_#C4A1FF] transition-all" />
                     <h4 className="text-white/90 font-medium">{detail}</h4>
-                    <p className="text-white/50 text-xs mt-1">{t('statDetail')}</p>
+                    <p className="text-white/40 text-xs mt-1">{t('statDetail')}</p>
                   </motion.div>
                 ))}
               </div>
@@ -113,9 +112,9 @@ export default function LeftSidebar() {
               setIsMobileOpen(false);
             }
           }}
-          className="w-12 h-12 rounded-full glass-panel flex items-center justify-center pointer-events-auto shadow-[0_0_20px_rgba(79,124,255,0.2)] border border-white/10"
+          className="w-12 h-12 rounded-full glass-panel flex items-center justify-center pointer-events-auto shadow-[0_0_20px_rgba(155,109,255,0.2)] border border-[#9B6DFF]/20"
         >
-          {isMobileOpen ? <X className="w-6 h-6 text-[#00D1FF]" /> : <Menu className="w-6 h-6 text-[#4F7CFF]" />}
+          {isMobileOpen ? <X className="w-6 h-6 text-[#C4A1FF]" /> : <Menu className="w-6 h-6 text-[#9B6DFF]" />}
         </button>
 
         <AnimatePresence>
@@ -133,8 +132,8 @@ export default function LeftSidebar() {
                   onClick={() => handleStatClick(i)}
                   className="flex flex-col items-center gap-1 group cursor-pointer"
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${activeStatId === i && activePanel === 'left-stats' ? 'bg-[#4F7CFF]/20 border-[#4F7CFF] shadow-[0_0_15px_rgba(79,124,255,0.5)]' : 'bg-white/5 border-white/10'}`}>
-                    <stat.icon className={`w-4 h-4 transition-colors ${activeStatId === i && activePanel === 'left-stats' ? 'text-[#00D1FF]' : 'text-[#4F7CFF]'}`} />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${activeStatId === i && activePanel === 'left-stats' ? 'bg-[#9B6DFF]/20 border-[#9B6DFF] shadow-[0_0_15px_rgba(155,109,255,0.5)]' : 'bg-white/5 border-white/10'}`}>
+                    <stat.icon className={`w-4 h-4 transition-colors ${activeStatId === i && activePanel === 'left-stats' ? 'text-[#C4A1FF]' : 'text-[#9B6DFF]'}`} />
                   </div>
                 </div>
               ))}
@@ -159,19 +158,19 @@ export default function LeftSidebar() {
               </button>
               
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-[#4F7CFF]/20 border border-[#4F7CFF]/50 flex items-center justify-center text-[#00D1FF]">
+                <div className="w-10 h-10 rounded-xl bg-[#9B6DFF]/20 border border-[#9B6DFF]/50 flex items-center justify-center text-[#C4A1FF]">
                   {React.createElement(stats[activeStatId].icon, { size: 20 })}
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">{stats[activeStatId].label}</h3>
-                  <p className="text-xs text-[#4F7CFF]">{stats[activeStatId].value} {t('statIndicator')}</p>
+                  <p className="text-xs text-[#9B6DFF]">{stats[activeStatId].value} {t('statIndicator')}</p>
                 </div>
               </div>
 
               <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
                 {stats[activeStatId].details.map((detail, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/10">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#4F7CFF] mb-1.5" />
+                  <div key={idx} className="p-3 rounded-xl bg-white/5 border border-[#9B6DFF]/10">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#9B6DFF] mb-1.5" />
                     <h4 className="text-white/90 font-medium text-sm">{detail}</h4>
                   </div>
                 ))}

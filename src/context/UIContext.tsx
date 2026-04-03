@@ -1,6 +1,18 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
-type PanelType = 'none' | 'video' | 'left-stats' | 'right-ai' | 'right-blog' | 'right-lang' | 'top-social';
+export type PanelType = 
+  | 'none' 
+  | 'video' 
+  | 'left-stats' 
+  | 'right-ai' 
+  | 'right-blog' 
+  | 'right-lang' 
+  | 'social'
+  | 'page-projects' 
+  | 'page-services' 
+  | 'page-courses' 
+  | 'page-resume' 
+  | 'page-contact';
 
 interface UIContextType {
   activePanel: PanelType;
@@ -13,12 +25,23 @@ interface UIContextType {
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
 export function UIProvider({ children }: { children: React.ReactNode }) {
-  const [activePanel, setActivePanel] = useState<PanelType>('none');
+  const [activePanel, setActivePanelRaw] = useState<PanelType>('none');
   const [activeStatId, setActiveStatId] = useState<number | null>(null);
 
-  const togglePanel = (panel: PanelType) => {
-    setActivePanel(current => current === panel ? 'none' : panel);
-  };
+  const setActivePanel = useCallback((panel: PanelType) => {
+    setActivePanelRaw(panel);
+    if (panel === 'none') {
+      setActiveStatId(null);
+    }
+  }, []);
+
+  const togglePanel = useCallback((panel: PanelType) => {
+    setActivePanelRaw(current => {
+      const next = current === panel ? 'none' : panel;
+      if (next === 'none') setActiveStatId(null);
+      return next;
+    });
+  }, []);
 
   return (
     <UIContext.Provider value={{ activePanel, setActivePanel, togglePanel, activeStatId, setActiveStatId }}>

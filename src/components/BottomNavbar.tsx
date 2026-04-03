@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
 import { Home, BookOpen, Wrench, Folder, Mail, FileText, Hexagon, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useLanguage } from '../context/LanguageContext';
-import { useUI } from '../context/UIContext';
+import { useUI, PanelType } from '../context/UIContext';
 
 function WireframeRobot() {
   const groupRef = useRef<THREE.Group>(null);
@@ -19,24 +18,21 @@ function WireframeRobot() {
 
   return (
     <group ref={groupRef}>
-      {/* Head */}
       <mesh position={[0, 1.5, 0]}>
         <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color="#00D1FF" wireframe />
+        <meshBasicMaterial color="#C4A1FF" wireframe />
       </mesh>
-      {/* Body */}
       <mesh position={[0, 0, 0]}>
         <cylinderGeometry args={[0.8, 0.8, 2, 8]} />
-        <meshBasicMaterial color="#7B61FF" wireframe />
+        <meshBasicMaterial color="#9B6DFF" wireframe />
       </mesh>
-      {/* Arms */}
       <mesh position={[-1.2, 0, 0]}>
         <boxGeometry args={[0.4, 1.5, 0.4]} />
-        <meshBasicMaterial color="#4F7CFF" wireframe />
+        <meshBasicMaterial color="#7B61FF" wireframe />
       </mesh>
       <mesh position={[1.2, 0, 0]}>
         <boxGeometry args={[0.4, 1.5, 0.4]} />
-        <meshBasicMaterial color="#4F7CFF" wireframe />
+        <meshBasicMaterial color="#7B61FF" wireframe />
       </mesh>
     </group>
   );
@@ -46,16 +42,16 @@ export default function BottomNavbar() {
   const { activePanel, togglePanel, setActivePanel } = useUI();
   const { t } = useLanguage();
 
-  const leftIcons = [
-    { icon: Home, label: t('home'), path: '/' },
-    { icon: BookOpen, label: t('courses'), path: '/courses' },
-    { icon: Wrench, label: t('services'), path: '/services' },
+  const leftIcons: { icon: typeof Home; label: string; panelId: PanelType }[] = [
+    { icon: Home, label: t('home'), panelId: 'none' as PanelType },
+    { icon: BookOpen, label: t('courses'), panelId: 'page-courses' },
+    { icon: Wrench, label: t('services'), panelId: 'page-services' },
   ];
 
-  const rightIcons = [
-    { icon: Folder, label: t('projects'), path: '/projects' },
-    { icon: Mail, label: t('contact'), path: '/contact' },
-    { icon: FileText, label: t('resume'), path: '/resume' },
+  const rightIcons: { icon: typeof Home; label: string; panelId: PanelType }[] = [
+    { icon: Folder, label: t('projects'), panelId: 'page-projects' },
+    { icon: Mail, label: t('contact'), panelId: 'page-contact' },
+    { icon: FileText, label: t('resume'), panelId: 'page-resume' },
   ];
 
   const getTranslateY = (index: number, isLeft: boolean) => {
@@ -70,6 +66,16 @@ export default function BottomNavbar() {
     }
   };
 
+  const handleNavClick = (panelId: PanelType) => {
+    if (panelId === 'none') {
+      setActivePanel('none');
+    } else {
+      setActivePanel(activePanel === panelId ? 'none' : panelId);
+    }
+  };
+
+  const isPagePanel = (panel: string) => panel.startsWith('page-');
+
   return (
     <>
       <div className="fixed bottom-[-10px] left-1/2 -translate-x-1/2 w-[95%] md:w-[85%] max-w-5xl flex justify-center z-50 pointer-events-none">
@@ -80,21 +86,20 @@ export default function BottomNavbar() {
             transform: 'perspective(800px) rotateX(10deg)',
             transformOrigin: 'bottom center',
             borderBottom: 'none',
-            boxShadow: '0 -10px 40px rgba(79,124,255,0.3), inset 0 10px 20px rgba(255,255,255,0.1)',
+            boxShadow: '0 -10px 40px rgba(155,109,255,0.3), inset 0 10px 20px rgba(196,161,255,0.1)',
           }}
         >
           {/* Left Icons */}
           <div className="flex items-center gap-4 md:gap-16 mt-2">
             {leftIcons.map((item, i) => (
-              <Link 
+              <button 
                 key={i} 
-                to={item.path} 
-                onClick={() => setActivePanel('none')}
-                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, true)}`}
+                onClick={() => handleNavClick(item.panelId)}
+                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, true)} ${activePanel === item.panelId ? 'text-[#C4A1FF]!' : ''}`}
               >
-                <item.icon className="w-5 h-5 md:w-6 md:h-6 group-hover:drop-shadow-[0_0_10px_rgba(79,124,255,0.8)]" />
+                <item.icon className={`w-5 h-5 md:w-6 md:h-6 ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_10px_rgba(196,161,255,0.8)]' : 'group-hover:drop-shadow-[0_0_10px_rgba(155,109,255,0.8)]'}`} />
                 <span className="text-[8px] md:text-[10px] font-medium tracking-wider hidden sm:block">{item.label}</span>
-              </Link>
+              </button>
             ))}
           </div>
 
@@ -102,7 +107,7 @@ export default function BottomNavbar() {
           <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/3">
             <button 
               onClick={() => togglePanel('video')}
-              className="w-[60px] h-[60px] md:w-[75px] md:h-[75px] rounded-full bg-gradient-to-br from-[#4F7CFF] to-[#7B61FF] flex items-center justify-center shadow-[0_0_40px_rgba(123,97,255,0.8)] hover:scale-110 transition-transform duration-300 border-2 border-white/20"
+              className="w-[60px] h-[60px] md:w-[75px] md:h-[75px] rounded-full bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_40px_rgba(155,109,255,0.8)] hover:scale-110 transition-transform duration-300 border-2 border-[#C4A1FF]/30"
             >
               <Hexagon className="w-6 h-6 md:w-8 md:h-8 text-white fill-white/20" />
             </button>
@@ -111,15 +116,14 @@ export default function BottomNavbar() {
           {/* Right Icons */}
           <div className="flex items-center gap-4 md:gap-16 mt-2">
             {rightIcons.map((item, i) => (
-              <Link 
+              <button 
                 key={i} 
-                to={item.path} 
-                onClick={() => setActivePanel('none')}
-                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, false)}`}
+                onClick={() => handleNavClick(item.panelId)}
+                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, false)} ${activePanel === item.panelId ? 'text-[#C4A1FF]!' : ''}`}
               >
-                <item.icon className="w-5 h-5 md:w-6 md:h-6 group-hover:drop-shadow-[0_0_10px_rgba(79,124,255,0.8)]" />
+                <item.icon className={`w-5 h-5 md:w-6 md:h-6 ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_10px_rgba(196,161,255,0.8)]' : 'group-hover:drop-shadow-[0_0_10px_rgba(155,109,255,0.8)]'}`} />
                 <span className="text-[8px] md:text-[10px] font-medium tracking-wider hidden sm:block">{item.label}</span>
-              </Link>
+              </button>
             ))}
           </div>
         </div>
@@ -139,7 +143,6 @@ export default function BottomNavbar() {
               <X size={24} />
             </button>
             
-            {/* Left Wireframe */}
             <div className="hidden md:block w-1/4 h-[300px] relative z-10">
               <Canvas camera={{ position: [0, 0, 5] }}>
                 <ambientLight intensity={0.5} />
@@ -147,8 +150,7 @@ export default function BottomNavbar() {
               </Canvas>
             </div>
 
-            {/* Center Video */}
-            <div className="w-full md:w-1/2 h-[250px] md:h-[400px] rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_30px_rgba(79,124,255,0.3)] relative group z-20 flex-shrink-0">
+            <div className="w-full md:w-1/2 h-[250px] md:h-[400px] rounded-2xl overflow-hidden border border-[#9B6DFF]/20 shadow-[0_0_30px_rgba(155,109,255,0.3)] relative group z-20 flex-shrink-0">
               <video 
                 src="https://www.w3schools.com/html/mov_bbb.mp4" 
                 autoPlay 
@@ -156,12 +158,11 @@ export default function BottomNavbar() {
                 muted 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A3A]/80 to-transparent flex items-end justify-center pb-6">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0515]/80 to-transparent flex items-end justify-center pb-6">
                 <h3 className="text-xl md:text-2xl font-bold text-white tracking-wider">{t('videoTitle')}</h3>
               </div>
             </div>
 
-            {/* Right Wireframe */}
             <div className="hidden md:block w-1/4 h-[300px] relative z-10">
               <Canvas camera={{ position: [0, 0, 5] }}>
                 <ambientLight intensity={0.5} />

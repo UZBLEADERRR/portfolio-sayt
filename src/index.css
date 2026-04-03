@@ -1,15 +1,20 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @theme {
-  --color-neon-primary: #4F7CFF;
+  --color-neon-primary: #9B6DFF;
   --color-neon-secondary: #7B61FF;
-  --color-neon-accent: #00D1FF;
+  --color-neon-accent: #C4A1FF;
   --color-glass-bg: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.1);
 }
 
+* {
+  cursor: none !important;
+}
+
 body {
-  background: radial-gradient(circle at 50% 40%, #0B1A3A 0%, #050B1A 60%, #020611 100%);
+  background: #0a0515;
   color: white;
   overflow: hidden;
   margin: 0;
@@ -18,26 +23,63 @@ body {
 }
 
 .glass-panel {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, rgba(155, 109, 255, 0.08) 0%, rgba(123, 97, 255, 0.03) 50%, rgba(196, 161, 255, 0.05) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(155, 109, 255, 0.2);
+  border-right: 1px solid rgba(155, 109, 255, 0.08);
+  border-bottom: 1px solid rgba(155, 109, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(123, 97, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(155, 109, 255, 0.05);
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(155, 109, 255, 0.2);
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(155, 109, 255, 0.4);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+.slide-panel-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 109, 255, 0.3) transparent;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: '▊';
+  animation: blink 0.8s infinite;
+  color: #C4A1FF;
 }
