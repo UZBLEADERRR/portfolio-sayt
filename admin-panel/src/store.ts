@@ -8,6 +8,7 @@ export interface BlogPost { id: string; title: string; content: string; date: st
 export interface StatItem { id: string; value: string; label: string; icon: string; details: string[]; }
 export interface SocialLink { id: string; platform: string; url: string; icon: string; }
 export interface AISettings { systemPrompt: string; greeting: string; knowledgeBase: string; }
+export interface MessageItem { id: string; name: string; email: string; subject: string; message: string; created_at: string; is_read: boolean; }
 
 function getAuthHeader(): string {
   const creds = sessionStorage.getItem('admin_creds');
@@ -16,10 +17,19 @@ function getAuthHeader(): string {
 
 async function apiGet(key: string) {
   try {
-    const res = await fetch(`/api/data/${key}`);
+    const res = await fetch(key.startsWith('/') ? key : `/api/data/${key}`);
     if (!res.ok) return [];
     return await res.json();
   } catch { return []; }
+}
+
+async function apiDelete(url: string) {
+  try {
+    await fetch(url, {
+      method: 'DELETE',
+      headers: { 'Authorization': getAuthHeader() },
+    });
+  } catch (err) { console.error('Delete error:', err); }
 }
 
 async function apiSet(key: string, data: any) {
@@ -76,4 +86,8 @@ export const store = {
   setAISettings: (d: AISettings) => apiSet('ai_settings', d),
   getChatHistory: (): Promise<any[]> => apiGet('chat_history'),
   setChatHistory: (d: any[]) => apiSet('chat_history', d),
+  
+  // Messages
+  getMessages: (): Promise<MessageItem[]> => apiGet('/api/messages'),
+  deleteMessage: (id: string) => apiDelete(`/api/messages/${id}`),
 };

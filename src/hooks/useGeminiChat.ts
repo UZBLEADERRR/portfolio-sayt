@@ -25,19 +25,6 @@ export function useGeminiChat() {
   const sendMessage = useCallback(async (userMessage: string) => {
     if (!userMessage.trim() || isLoading) return;
 
-    const apiKey = typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '';
-    
-    if (!apiKey) {
-      const errorMsg: Message = {
-        id: Date.now().toString() + '-error',
-        role: 'assistant',
-        content: '⚠️ API kalit topilmadi. Iltimos, GEMINI_API_KEY ni sozlang.',
-        timestamp: Date.now(),
-      };
-      setMessages(prev => [...prev, errorMsg]);
-      return;
-    }
-
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -51,54 +38,39 @@ export function useGeminiChat() {
     abortRef.current = false;
 
     try {
-      const ai = new GoogleGenAI({ apiKey });
-
-      // Build conversation history for context
-      const history = messages.map(m => ({
-        role: m.role === 'user' ? 'user' as const : 'model' as const,
-        parts: [{ text: m.content }],
-      }));
-
-      const response = await ai.models.generateContentStream({
-        model: 'gemini-3.0-flash',
-        contents: [
-          { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
-          { role: 'model', parts: [{ text: 'Tushundim! Men Sarvarning AI yordamchisiman. Yordam berishga tayyorman.' }] },
-          ...history,
-          { role: 'user', parts: [{ text: userMessage }] },
-        ],
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messages.map(m => ({ role: m.role === 'user' ? 'user' : 'model', content: m.content })),
+          userMessage
+        }),
       });
 
-      let fullText = '';
+      const data = await response.json();
       
-      for await (const chunk of response) {
-        if (abortRef.current) break;
-        const text = chunk.text || '';
-        fullText += text;
-        setStreamingText(fullText);
-      }
+      if (!response.ok) throw new Error(data.error || 'Chat xatosi');
 
       if (!abortRef.current) {
         const assistantMsg: Message = {
           id: Date.now().toString() + '-assistant',
           role: 'assistant',
-          content: fullText,
+          content: data.text,
           timestamp: Date.now(),
         };
         setMessages(prev => [...prev, assistantMsg]);
       }
     } catch (error: any) {
-      console.error('Gemini API error:', error);
+      console.error('Chat error:', error);
       const errorMsg: Message = {
         id: Date.now().toString() + '-error',
         role: 'assistant',
-        content: `❌ Xatolik yuz berdi: ${error?.message || 'Noma\'lum xatolik'}`,
+        content: `❌ Xatolik: ${error.message}`,
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
-      setStreamingText('');
     }
   }, [messages, isLoading]);
 

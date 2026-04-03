@@ -29,12 +29,31 @@ export async function initDB() {
       username VARCHAR(100) NOT NULL DEFAULT 'admin',
       password VARCHAR(255) NOT NULL DEFAULT 'sarvar2024'
     );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100),
+      email VARCHAR(100),
+      subject VARCHAR(200),
+      message TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      is_read BOOLEAN DEFAULT FALSE
+    );
   `);
 
   // Insert default credentials if not exists
   const creds = await pool.query('SELECT * FROM admin_credentials');
   if (creds.rows.length === 0) {
     await pool.query(`INSERT INTO admin_credentials (username, password) VALUES ('admin', 'sarvar2024')`);
+  }
+
+  // Ensure 'stats' has at least one item so sidebar doesn't "disappear"
+  const stats = await pool.query("SELECT * FROM portfolio_data WHERE key = 'stats'");
+  if (stats.rows.length === 0 || (stats.rows[0].value && JSON.parse(JSON.stringify(stats.rows[0].value)).length === 0)) {
+     const defaultStats = [
+       { id: '1', value: '10+', label: 'Loyihalar', icon: 'FolderKanban', details: ['React loyihalar', 'Mobile ilovalar'] }
+     ];
+     await setData('stats', defaultStats);
   }
 
   console.log('✅ Database initialized');

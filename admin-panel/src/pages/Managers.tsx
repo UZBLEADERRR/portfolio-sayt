@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Trash2, Edit3, Save, X, Wrench, BookOpen, Rss, BarChart3, Share2, Folder } from 'lucide-react';
-import { store, ServiceItem, CourseItem, BlogPost, StatItem, SocialLink, ProjectItem } from '../store';
+import { Plus, Trash2, Edit3, Save, X, Wrench, BookOpen, Rss, BarChart3, Share2, Folder, Mail, Clock, User } from 'lucide-react';
+import { store, ServiceItem, CourseItem, BlogPost, StatItem, SocialLink, ProjectItem, MessageItem } from '../store';
 
 // Generic async CRUD Manager
 function CRUDManager<T extends { id: string }>({
@@ -169,4 +169,64 @@ export function SocialsManager() {
     fields={[{ key: 'platform', label: 'Platforma' }, { key: 'url', label: 'URL' }, { key: 'icon', label: 'Icon (Instagram, Send, etc)' }]}
     renderItem={item => <div className="flex items-center gap-4"><div className="w-10 h-10 rounded-xl bg-[#9B6DFF]/10 border border-[#9B6DFF]/20 flex items-center justify-center"><Share2 size={18} className="text-[#C4A1FF]" /></div><div><h3 className="text-white font-bold">{item.platform}</h3><p className="text-white/30 text-xs">{item.url}</p></div></div>}
   />;
+}
+
+export function MessagesManager() {
+  const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    store.getMessages().then(m => { setMessages(m || []); setLoading(false); });
+  }, []);
+
+  const remove = async (id: string) => {
+    if (confirm('Xabarni o\'chirishni xohlaysizmi?')) {
+      await store.deleteMessage(id);
+      setMessages(messages.filter(m => m.id !== id));
+    }
+  };
+
+  return (
+    <div>
+      <div className="mb-10">
+        <h1 className="text-4xl font-black bg-gradient-to-r from-[#9B6DFF] to-[#00D1FF] bg-clip-text text-transparent flex items-center gap-4">
+          <Mail size={40} className="text-[#9B6DFF]" /> Kelgan xabarlar
+        </h1>
+        <p className="text-white/30 mt-2">Portfolio orqali yuborilgan barcha murojaatlar</p>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-[#9B6DFF]/20 border-t-[#9B6DFF] rounded-full animate-spin" /></div>
+      ) : messages.length === 0 ? (
+        <div className="text-center py-20 bg-white/5 rounded-[32px] border border-white/10">
+          <Mail size={48} className="mx-auto mb-4 text-white/10" />
+          <p className="text-white/30 text-lg">Hozircha xabarlar yo'q</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {messages.map((m, i) => (
+            <motion.div key={m.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card rounded-3xl p-6 relative group border border-white/5 hover:border-[#9B6DFF]/30 transition-all">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#9B6DFF]/20 flex items-center justify-center text-[#C4A1FF]"><User size={20} /></div>
+                  <div>
+                    <h3 className="text-white font-bold">{m.name}</h3>
+                    <p className="text-white/40 text-xs">{m.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 text-xs text-white/30">
+                  <span className="flex items-center gap-1"><Clock size={14} /> {new Date(m.created_at).toLocaleString()}</span>
+                  <button onClick={() => remove(m.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={16} /></button>
+                </div>
+              </div>
+              <div className="bg-black/20 rounded-2xl p-4">
+                <div className="text-[#C4A1FF] text-xs font-bold uppercase tracking-wider mb-2">{m.subject}</div>
+                <p className="text-white/70 text-sm whitespace-pre-wrap leading-relaxed">{m.message}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

@@ -4,7 +4,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import ResumeManager from './pages/ResumeManager';
-import { ProjectsManager, ServicesManager, CoursesManager, BlogManager, StatsManager, SocialsManager } from './pages/Managers';
+import { ProjectsManager, ServicesManager, CoursesManager, BlogManager, StatsManager, SocialsManager, MessagesManager } from './pages/Managers';
 import { AISettingsPage, ChatHistoryPage } from './pages/AIPages';
 
 export default function App() {
@@ -24,6 +24,7 @@ export default function App() {
     'blog': <BlogManager />,
     'stats': <StatsManager />,
     'socials': <SocialsManager />,
+    'messages': <MessagesManager />,
     'ai-settings': <AISettingsPage />,
     'chat-history': <ChatHistoryPage />,
   };

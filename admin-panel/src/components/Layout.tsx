@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard, FileText, Folder, Wrench, BookOpen, 
   Rss, Bot, MessageSquare, BarChart3, Share2, LogOut,
-  ChevronLeft, ChevronRight, Shield
+  ChevronLeft, ChevronRight, Shield, Mail
 } from 'lucide-react';
 import { store } from '../store';
 
@@ -23,6 +23,7 @@ const menuItems = [
   { id: 'blog', icon: Rss, label: 'Blog' },
   { id: 'stats', icon: BarChart3, label: 'Statistika' },
   { id: 'socials', icon: Share2, label: 'Tarmoqlar' },
+  { id: 'messages', icon: Mail, label: 'Xabarlar' },
   { id: 'ai-settings', icon: Bot, label: 'AI Sozlamalar' },
   { id: 'chat-history', icon: MessageSquare, label: 'Chat Tarixi' },
 ];

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getData, setData, getCredentials, setCredentials } from './db.js';
+import { getData, setData, getCredentials, setCredentials, pool } from './db.js';
 
 const router = express.Router();
 
@@ -75,6 +75,42 @@ router.put('/auth/credentials', adminAuth, async (req, res) => {
   }
 });
 
+// ===== Messages API (public & admin) =====
+// Save message (public)
+router.post('/messages', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    await pool.query(
+      'INSERT INTO messages (name, email, subject, message) VALUES ($1, $2, $3, $4)',
+      [name, email, subject, message]
+    );
+    res.json({ success: true, message: 'Xabaringiz yuborildi!' });
+  } catch (err) {
+    console.error('Message error:', err);
+    res.status(500).json({ error: 'Xabarni yuborishda xatolik yuz berdi.' });
+  }
+});
+
+// Get all messages (admin only)
+router.get('/messages', adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Xabarlarni yuklashda xatolik yuz berdi.' });
+  }
+});
+
+// Delete message (admin only)
+router.delete('/messages/:id', adminAuth, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM messages WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Xabarni o\'chirishda xatolik yuz berdi.' });
+  }
+});
+
 // ===== AI Chat Proxy (server-side, keeps API key safe) =====
 router.post('/chat', async (req, res) => {
   try {
@@ -104,7 +140,7 @@ router.post('/chat', async (req, res) => {
 
     // Use Google GenAI REST API directly
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

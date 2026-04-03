@@ -17,9 +17,9 @@ app.use(express.json());
 app.use('/api', apiRouter);
 
 // Serve admin panel
-app.use('/admin', express.static(path.join(__dirname, 'dist', 'admin')));
-app.get('/admin/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'admin', 'index.html'));
+app.use('/admin-panel', express.static(path.join(__dirname, 'dist', 'admin-panel')));
+app.get('/admin-panel/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'admin-panel', 'index.html'));
 });
 
 // Serve main portfolio
@@ -35,7 +35,7 @@ async function start() {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`Portfolio: http://localhost:${PORT}`);
-      console.log(`Admin: http://localhost:${PORT}/admin`);
+      console.log(`Admin Trace: http://localhost:${PORT}/admin-panel`);
       console.log(`API: http://localhost:${PORT}/api`);
     });
   } catch (err) {

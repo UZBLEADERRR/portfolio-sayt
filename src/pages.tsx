@@ -150,19 +150,80 @@ export function ResumeContent() {
 
 export function ContactContent() {
   const { t } = useLanguage();
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full">
       <AnimItem><p className="text-white/50 mb-10 text-base text-center max-w-2xl">{t('contactDesc')}</p></AnimItem>
       <AnimItem delay={0.2}>
         <div className="w-full max-w-2xl glass-panel p-10 rounded-[40px]">
-          <form className="flex flex-col gap-6" onSubmit={e => e.preventDefault()}>
+          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
             <div className="flex flex-col md:flex-row gap-6">
-              <input type="text" placeholder={t('namePlaceholder')} className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors placeholder:text-white/30" />
-              <input type="email" placeholder={t('emailPlaceholder')} className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors placeholder:text-white/30" />
+              <input 
+                type="text" 
+                placeholder={t('namePlaceholder')} 
+                value={formData.name}
+                onChange={e => setFormData({...formData, name: e.target.value})}
+                required
+                className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors placeholder:text-white/30" 
+              />
+              <input 
+                type="email" 
+                placeholder={t('emailPlaceholder')} 
+                value={formData.email}
+                onChange={e => setFormData({...formData, email: e.target.value})}
+                required
+                className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors placeholder:text-white/30" 
+              />
             </div>
-            <input type="text" placeholder={t('subjectPlaceholder')} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors placeholder:text-white/30" />
-            <textarea placeholder={t('message')} rows={5} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors resize-none placeholder:text-white/30" />
-            <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#7B61FF] to-[#9B6DFF] text-white font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(155,109,255,0.4)]"><Send size={20} />{t('send')}</button>
+            <input 
+              type="text" 
+              placeholder={t('subjectPlaceholder')} 
+              value={formData.subject}
+              onChange={e => setFormData({...formData, subject: e.target.value})}
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors placeholder:text-white/30" 
+            />
+            <textarea 
+              placeholder={t('message')} 
+              value={formData.message}
+              onChange={e => setFormData({...formData, message: e.target.value})}
+              required
+              rows={5} 
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#9B6DFF]/50 transition-colors resize-none placeholder:text-white/30" 
+            />
+            
+            {status === 'success' && <div className="text-green-400 text-sm text-center">Xabaringiz yuborildi! Tez orada javob beramiz.</div>}
+            {status === 'error' && <div className="text-red-400 text-sm text-center">Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.</div>}
+
+            <button 
+              disabled={status === 'loading'}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#7B61FF] to-[#9B6DFF] text-white font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(155,109,255,0.4)] disabled:opacity-50"
+            >
+              {status === 'loading' ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send size={20} />{t('send')}</>}
+            </button>
           </form>
         </div>
       </AnimItem>
