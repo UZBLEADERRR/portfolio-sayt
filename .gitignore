@@ -8,3 +8,4 @@ coverage/
 !.env.example
 admin-panel/node_modules/
 admin-panel/dist/
+3d_avatarim.mp4

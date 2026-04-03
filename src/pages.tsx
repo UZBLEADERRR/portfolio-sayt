@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from './context/LanguageContext';
 import { motion } from 'motion/react';
-import { Code, Palette, Smartphone, Globe, Database, Play, Send } from 'lucide-react';
+import { Code, Palette, Smartphone, Globe, Database, Play, Send, Wrench, ExternalLink } from 'lucide-react';
+
+// localStorage helper — same keys as admin panel
+function getData<T>(key: string, fallback: T): T {
+  try {
+    const stored = localStorage.getItem(`admin_${key}`);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 const AnimItem = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
   <motion.div
@@ -15,107 +25,162 @@ const AnimItem = ({ children, delay = 0 }: { children: React.ReactNode; delay?: 
 
 export function ProjectsContent() {
   const { t } = useLanguage();
+  const [projects, setProjects] = useState<any[]>([]);
+  
+  useEffect(() => { setProjects(getData('projects', [])); }, []);
+
   return (
     <div className="flex flex-col items-center w-full">
       <AnimItem><p className="text-white/50 mb-10 text-base text-center max-w-2xl">{t('projectsDesc')}</p></AnimItem>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-        {[1, 2, 3, 4, 5, 6].map((i, idx) => (
-          <AnimItem key={i} delay={idx * 0.1}>
-            <div className="glass-panel p-6 rounded-3xl hover:-translate-y-2 transition-transform duration-300 group">
-              <div className="w-full h-40 bg-black/30 rounded-2xl mb-4 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#9B6DFF]/20 to-[#C4A1FF]/20 group-hover:scale-110 transition-transform duration-500" />
-                <Code className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 text-white/20 group-hover:text-[#C4A1FF] transition-colors" />
+      {projects.length === 0 ? (
+        <div className="text-center py-16 text-white/20">
+          <Code size={40} className="mx-auto mb-3" />
+          <p>Loyihalar admin paneldan qo'shiladi</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+          {projects.map((p: any, idx: number) => (
+            <AnimItem key={p.id} delay={idx * 0.1}>
+              <div className="glass-panel p-6 rounded-3xl hover:-translate-y-2 transition-transform duration-300 group">
+                <div className="w-full h-40 bg-black/30 rounded-2xl mb-4 overflow-hidden relative">
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#9B6DFF]/20 to-[#C4A1FF]/20 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center">
+                      <Code className="w-10 h-10 text-white/20 group-hover:text-[#C4A1FF] transition-colors" />
+                    </div>
+                  )}
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
+                <p className="text-white/50 text-sm mb-2">{p.description}</p>
+                <p className="text-[#C4A1FF]/60 text-xs">{p.tech}</p>
+                {p.url && p.url !== '#' && (
+                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-3 text-[#C4A1FF] text-sm hover:text-white transition-colors">
+                    <ExternalLink size={14} /> Ko'rish
+                  </a>
+                )}
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Project Alpha {i}</h3>
-              <p className="text-white/40 text-sm">{t('projectTech')}</p>
-            </div>
-          </AnimItem>
-        ))}
-      </div>
+            </AnimItem>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
+const iconMap: Record<string, any> = { Globe, Smartphone, Palette, Database, Wrench, Code };
+
 export function ServicesContent() {
   const { t } = useLanguage();
-  const services = [
-    { icon: Globe, title: t('serviceWeb'), desc: t('serviceWebDesc') },
-    { icon: Smartphone, title: t('serviceMobile'), desc: t('serviceMobileDesc') },
-    { icon: Palette, title: t('serviceUI'), desc: t('serviceUIDesc') },
-    { icon: Database, title: t('serviceBackend'), desc: t('serviceBackendDesc') },
-  ];
+  const [services, setServices] = useState<any[]>([]);
+  
+  useEffect(() => { setServices(getData('services', [])); }, []);
+
   return (
     <div className="flex flex-col items-center w-full">
       <AnimItem><p className="text-white/50 mb-10 text-base text-center max-w-2xl">{t('servicesDesc')}</p></AnimItem>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-        {services.map((s, i) => (
-          <AnimItem key={i} delay={i * 0.1}>
-            <div className="glass-panel p-8 rounded-3xl flex items-start gap-6 hover:bg-white/5 transition-colors group">
-              <div className="w-16 h-16 rounded-2xl bg-[#9B6DFF]/20 flex items-center justify-center border border-[#9B6DFF]/30 group-hover:border-[#C4A1FF] transition-colors flex-shrink-0">
-                <s.icon className="w-8 h-8 text-[#C4A1FF]" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-2">{s.title}</h3>
-                <p className="text-white/50">{s.desc}</p>
-              </div>
-            </div>
-          </AnimItem>
-        ))}
-      </div>
+      {services.length === 0 ? (
+        <div className="text-center py-16 text-white/20">
+          <Wrench size={40} className="mx-auto mb-3" />
+          <p>Xizmatlar admin paneldan qo'shiladi</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+          {services.map((s: any, i: number) => {
+            const IconComp = iconMap[s.icon] || Globe;
+            return (
+              <AnimItem key={s.id} delay={i * 0.1}>
+                <div className="glass-panel p-8 rounded-3xl flex items-start gap-6 hover:bg-white/5 transition-colors group">
+                  <div className="w-16 h-16 rounded-2xl bg-[#9B6DFF]/20 flex items-center justify-center border border-[#9B6DFF]/30 group-hover:border-[#C4A1FF] transition-colors flex-shrink-0">
+                    <IconComp className="w-8 h-8 text-[#C4A1FF]" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-2">{s.title}</h3>
+                    <p className="text-white/50">{s.description}</p>
+                  </div>
+                </div>
+              </AnimItem>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
 
 export function CoursesContent() {
   const { t } = useLanguage();
+  const [courses, setCourses] = useState<any[]>([]);
+  
+  useEffect(() => { setCourses(getData('courses', [])); }, []);
+
   return (
     <div className="flex flex-col items-center w-full">
       <AnimItem><p className="text-white/50 mb-10 text-base text-center max-w-2xl">{t('coursesDesc')}</p></AnimItem>
-      <div className="flex flex-col gap-6 w-full max-w-4xl">
-        {[1, 2, 3].map((i, idx) => (
-          <AnimItem key={i} delay={idx * 0.1}>
-            <div className="glass-panel p-4 rounded-3xl flex flex-col md:flex-row items-center gap-6 group">
-              <div className="w-full md:w-48 h-32 bg-black/40 rounded-2xl relative overflow-hidden flex-shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#9B6DFF]/20 to-transparent" />
-                <Play className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 text-white/50 group-hover:text-white group-hover:scale-110 transition-all" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-white mb-2">Frontend Masterclass {i}</h3>
-                <p className="text-white/40 mb-4">{t('courseDesc')}</p>
-                <div className="flex gap-2">
-                  <span className="px-3 py-1 rounded-full bg-[#9B6DFF]/15 text-xs text-[#C4A1FF] border border-[#9B6DFF]/20">24 {t('courseLessons')}</span>
-                  <span className="px-3 py-1 rounded-full bg-[#9B6DFF]/15 text-xs text-[#C4A1FF] border border-[#9B6DFF]/20">{t('courseCert')}</span>
+      {courses.length === 0 ? (
+        <div className="text-center py-16 text-white/20">
+          <Play size={40} className="mx-auto mb-3" />
+          <p>Kurslar admin paneldan qo'shiladi</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6 w-full max-w-4xl">
+          {courses.map((c: any, idx: number) => (
+            <AnimItem key={c.id} delay={idx * 0.1}>
+              <div className="glass-panel p-6 rounded-3xl flex flex-col md:flex-row items-center gap-6 group">
+                <div className="w-full md:w-48 h-32 bg-black/40 rounded-2xl relative overflow-hidden flex-shrink-0">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#9B6DFF]/20 to-transparent" />
+                  <Play className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 text-white/50 group-hover:text-white group-hover:scale-110 transition-all" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-white mb-2">{c.title}</h3>
+                  <p className="text-white/40 mb-4">{c.description}</p>
+                  <div className="flex gap-2">
+                    <span className="px-3 py-1 rounded-full bg-[#9B6DFF]/15 text-xs text-[#C4A1FF] border border-[#9B6DFF]/20">{c.lessons} dars</span>
+                    {c.hasCertificate && <span className="px-3 py-1 rounded-full bg-[#9B6DFF]/15 text-xs text-[#C4A1FF] border border-[#9B6DFF]/20">Sertifikat</span>}
+                  </div>
                 </div>
               </div>
-            </div>
-          </AnimItem>
-        ))}
-      </div>
+            </AnimItem>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 export function ResumeContent() {
   const { t } = useLanguage();
+  const [resume, setResume] = useState<any[]>([]);
+  
+  useEffect(() => { setResume(getData('resume', [])); }, []);
+
   return (
     <div className="flex flex-col items-center w-full">
       <AnimItem><p className="text-white/50 mb-10 text-base text-center max-w-2xl">{t('resumeDesc')}</p></AnimItem>
-      <div className="w-full max-w-3xl relative">
-        <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#9B6DFF] via-[#C4A1FF]/30 to-transparent" />
-        {[1, 2, 3].map((i, idx) => (
-          <AnimItem key={i} delay={idx * 0.15}>
-            <div className="relative pl-20 mb-10">
-              <div className="absolute left-[26px] top-2 w-4 h-4 rounded-full bg-[#9B6DFF] shadow-[0_0_15px_#9B6DFF]" />
-              <div className="glass-panel p-6 rounded-3xl">
-                <span className="text-[#C4A1FF] text-sm font-bold mb-2 block">202{4-i} - {i === 1 ? t('present') : `202${5-i}`}</span>
-                <h3 className="text-xl font-bold text-white mb-1">{t('resumeRole')}</h3>
-                <p className="text-white/40 text-sm mb-4">{t('resumeCompany')} {i}</p>
-                <p className="text-white/60">{t('resumeDetail')}</p>
+      {resume.length === 0 ? (
+        <div className="text-center py-16 text-white/20">
+          <p>Resume ma'lumotlari admin paneldan qo'shiladi</p>
+        </div>
+      ) : (
+        <div className="w-full max-w-3xl relative">
+          <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#9B6DFF] via-[#C4A1FF]/30 to-transparent" />
+          {resume.map((r: any, idx: number) => (
+            <AnimItem key={r.id} delay={idx * 0.15}>
+              <div className="relative pl-20 mb-10">
+                <div className="absolute left-[26px] top-2 w-4 h-4 rounded-full bg-[#9B6DFF] shadow-[0_0_15px_#9B6DFF]" />
+                <div className="glass-panel p-6 rounded-3xl">
+                  <span className="text-[#C4A1FF] text-sm font-bold mb-2 block">
+                    {r.startYear} - {r.isPresent ? 'Hozirgacha' : r.endYear}
+                  </span>
+                  <h3 className="text-xl font-bold text-white mb-1">{r.role}</h3>
+                  <p className="text-white/40 text-sm mb-4">{r.company}</p>
+                  <p className="text-white/60">{r.description}</p>
+                </div>
               </div>
-            </div>
-          </AnimItem>
-        ))}
-      </div>
+            </AnimItem>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

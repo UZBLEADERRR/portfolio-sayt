@@ -1,42 +1,8 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Home, BookOpen, Wrench, Folder, Mail, FileText, Hexagon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
 import { useLanguage } from '../context/LanguageContext';
 import { useUI, PanelType } from '../context/UIContext';
-
-function WireframeRobot() {
-  const groupRef = useRef<THREE.Group>(null);
-  
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = clock.getElapsedTime() * 0.5;
-      groupRef.current.position.y = Math.sin(clock.getElapsedTime()) * 0.2;
-    }
-  });
-
-  return (
-    <group ref={groupRef}>
-      <mesh position={[0, 1.5, 0]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color="#C4A1FF" wireframe />
-      </mesh>
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.8, 0.8, 2, 8]} />
-        <meshBasicMaterial color="#9B6DFF" wireframe />
-      </mesh>
-      <mesh position={[-1.2, 0, 0]}>
-        <boxGeometry args={[0.4, 1.5, 0.4]} />
-        <meshBasicMaterial color="#7B61FF" wireframe />
-      </mesh>
-      <mesh position={[1.2, 0, 0]}>
-        <boxGeometry args={[0.4, 1.5, 0.4]} />
-        <meshBasicMaterial color="#7B61FF" wireframe />
-      </mesh>
-    </group>
-  );
-}
 
 export default function BottomNavbar() {
   const { activePanel, togglePanel, setActivePanel } = useUI();
@@ -176,37 +142,21 @@ export default function BottomNavbar() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-[90px] md:bottom-[120px] left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] max-w-6xl max-h-[65dvh] glass-panel rounded-3xl z-40 flex flex-col md:flex-row items-center justify-between p-4 md:p-8 overflow-y-auto custom-scrollbar pointer-events-auto"
+            className="fixed bottom-[70px] md:bottom-[120px] left-1/2 -translate-x-1/2 w-[92%] md:w-[60%] max-w-3xl glass-panel rounded-3xl z-40 flex items-center justify-center p-4 md:p-6 pointer-events-auto"
           >
-            <button onClick={() => setActivePanel('none')} className="absolute top-4 right-4 text-white/50 hover:text-white z-50 bg-black/20 p-2 rounded-full">
-              <X size={24} />
+            <button onClick={() => setActivePanel('none')} className="absolute top-3 right-3 text-white/50 hover:text-white z-50 bg-black/30 p-2 rounded-full">
+              <X size={20} />
             </button>
-            
-            <div className="hidden md:block w-1/4 h-[300px] relative z-10">
-              <Canvas camera={{ position: [0, 0, 5] }}>
-                <ambientLight intensity={0.5} />
-                <WireframeRobot />
-              </Canvas>
-            </div>
 
-            <div className="w-full md:w-1/2 h-[250px] md:h-[400px] rounded-2xl overflow-hidden border border-[#9B6DFF]/20 shadow-[0_0_30px_rgba(155,109,255,0.3)] relative group z-20 flex-shrink-0">
+            <div className="w-full h-[250px] md:h-[400px] rounded-2xl overflow-hidden border border-[#9B6DFF]/20 shadow-[0_0_30px_rgba(155,109,255,0.3)] relative">
               <video 
-                src="https://www.w3schools.com/html/mov_bbb.mp4" 
+                src="/3d_avatarim.mp4" 
                 autoPlay 
                 loop 
                 muted 
+                playsInline
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0515]/80 to-transparent flex items-end justify-center pb-6">
-                <h3 className="text-xl md:text-2xl font-bold text-white tracking-wider">{t('videoTitle')}</h3>
-              </div>
-            </div>
-
-            <div className="hidden md:block w-1/4 h-[300px] relative z-10">
-              <Canvas camera={{ position: [0, 0, 5] }}>
-                <ambientLight intensity={0.5} />
-                <WireframeRobot />
-              </Canvas>
             </div>
           </motion.div>
         )}

@@ -15,12 +15,28 @@ export default function LeftSidebar() {
     }
   }, [activePanel]);
 
-  const stats = [
-    { icon: Briefcase, value: '3+', label: t('yearsExp'), details: t('stat1Desc').split(', ') },
-    { icon: FolderKanban, value: '15+', label: t('projectsCount'), details: t('stat2Desc').split(', ') },
-    { icon: Users, value: '8+', label: t('clients'), details: t('stat3Desc').split(', ') },
-    { icon: Award, value: '4', label: t('certs'), details: t('stat4Desc').split(', ') },
-  ];
+  // Read stats from localStorage (admin panel writes here)
+  const iconMap: Record<string, typeof Briefcase> = { Briefcase, FolderKanban, Users, Award };
+  const storedStats = (() => {
+    try {
+      const s = localStorage.getItem('admin_stats');
+      return s ? JSON.parse(s) : null;
+    } catch { return null; }
+  })();
+
+  const stats = storedStats 
+    ? storedStats.map((s: any) => ({
+        icon: iconMap[s.icon] || Briefcase,
+        value: s.value,
+        label: s.label,
+        details: s.details || [],
+      }))
+    : [
+        { icon: Briefcase, value: '3+', label: t('yearsExp'), details: t('stat1Desc').split(', ') },
+        { icon: FolderKanban, value: '15+', label: t('projectsCount'), details: t('stat2Desc').split(', ') },
+        { icon: Users, value: '8+', label: t('clients'), details: t('stat3Desc').split(', ') },
+        { icon: Award, value: '4', label: t('certs'), details: t('stat4Desc').split(', ') },
+      ];
 
   const handleStatClick = (i: number) => {
     if (activeStatId === i && activePanel === 'left-stats') {
