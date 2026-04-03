@@ -74,13 +74,55 @@ export default function BottomNavbar() {
     }
   };
 
-  const isPagePanel = (panel: string) => panel.startsWith('page-');
+
 
   return (
     <>
-      <div className="fixed bottom-[-10px] left-1/2 -translate-x-1/2 w-[95%] md:w-[85%] max-w-5xl flex justify-center z-50 pointer-events-none">
+      {/* Mobile Bottom Nav */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+        <div className="pointer-events-auto glass-panel border-t border-[#9B6DFF]/20 px-2 pb-2 pt-1" style={{ boxShadow: '0 -8px 30px rgba(155,109,255,0.2)' }}>
+          <div className="flex items-center justify-around relative">
+            {/* Left icons */}
+            {leftIcons.map((item, i) => (
+              <button
+                key={'l'+i}
+                onClick={() => handleNavClick(item.panelId)}
+                className="flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-all relative"
+              >
+                <item.icon className={`w-5 h-5 transition-colors ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_8px_rgba(196,161,255,0.8)]' : 'text-white/50'}`} />
+                <span className={`text-[9px] font-medium ${activePanel === item.panelId ? 'text-[#C4A1FF]' : 'text-white/40'}`}>{item.label}</span>
+                {activePanel === item.panelId && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-1 rounded-full bg-[#9B6DFF] shadow-[0_0_8px_#9B6DFF]" />}
+              </button>
+            ))}
+
+            {/* Center button */}
+            <button
+              onClick={() => togglePanel('video')}
+              className="w-14 h-14 -mt-6 rounded-full bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_30px_rgba(155,109,255,0.6)] border-2 border-[#C4A1FF]/30 flex-shrink-0"
+            >
+              <Hexagon className="w-6 h-6 text-white fill-white/20" />
+            </button>
+
+            {/* Right icons */}
+            {rightIcons.map((item, i) => (
+              <button
+                key={'r'+i}
+                onClick={() => handleNavClick(item.panelId)}
+                className="flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-all relative"
+              >
+                <item.icon className={`w-5 h-5 transition-colors ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_8px_rgba(196,161,255,0.8)]' : 'text-white/50'}`} />
+                <span className={`text-[9px] font-medium ${activePanel === item.panelId ? 'text-[#C4A1FF]' : 'text-white/40'}`}>{item.label}</span>
+                {activePanel === item.panelId && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-1 rounded-full bg-[#9B6DFF] shadow-[0_0_8px_#9B6DFF]" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Bottom Nav */}
+      <div className="hidden md:flex fixed bottom-[-10px] left-1/2 -translate-x-1/2 w-[85%] max-w-5xl justify-center z-50 pointer-events-none">
         <div 
-          className="w-full h-[90px] md:h-[110px] pointer-events-auto flex items-start pt-3 md:pt-5 justify-evenly px-2 md:px-10 relative glass-panel"
+          className="w-full h-[110px] pointer-events-auto flex items-start pt-5 justify-evenly px-10 relative glass-panel"
           style={{
             borderRadius: '50% 50% 0 0 / 100% 100% 0 0',
             transform: 'perspective(800px) rotateX(10deg)',
@@ -89,40 +131,37 @@ export default function BottomNavbar() {
             boxShadow: '0 -10px 40px rgba(155,109,255,0.3), inset 0 10px 20px rgba(196,161,255,0.1)',
           }}
         >
-          {/* Left Icons */}
-          <div className="flex items-center gap-4 md:gap-16 mt-2">
+          <div className="flex items-center gap-16 mt-2">
             {leftIcons.map((item, i) => (
               <button 
                 key={i} 
                 onClick={() => handleNavClick(item.panelId)}
-                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, true)} ${activePanel === item.panelId ? 'text-[#C4A1FF]!' : ''}`}
+                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, true)}`}
               >
-                <item.icon className={`w-5 h-5 md:w-6 md:h-6 ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_10px_rgba(196,161,255,0.8)]' : 'group-hover:drop-shadow-[0_0_10px_rgba(155,109,255,0.8)]'}`} />
-                <span className="text-[8px] md:text-[10px] font-medium tracking-wider hidden sm:block">{item.label}</span>
+                <item.icon className={`w-6 h-6 ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_10px_rgba(196,161,255,0.8)]' : 'group-hover:drop-shadow-[0_0_10px_rgba(155,109,255,0.8)]'}`} />
+                <span className="text-[10px] font-medium tracking-wider">{item.label}</span>
               </button>
             ))}
           </div>
 
-          {/* Center Button */}
           <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/3">
             <button 
               onClick={() => togglePanel('video')}
-              className="w-[60px] h-[60px] md:w-[75px] md:h-[75px] rounded-full bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_40px_rgba(155,109,255,0.8)] hover:scale-110 transition-transform duration-300 border-2 border-[#C4A1FF]/30"
+              className="w-[75px] h-[75px] rounded-full bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center shadow-[0_0_40px_rgba(155,109,255,0.8)] hover:scale-110 transition-transform duration-300 border-2 border-[#C4A1FF]/30"
             >
-              <Hexagon className="w-6 h-6 md:w-8 md:h-8 text-white fill-white/20" />
+              <Hexagon className="w-8 h-8 text-white fill-white/20" />
             </button>
           </div>
 
-          {/* Right Icons */}
-          <div className="flex items-center gap-4 md:gap-16 mt-2">
+          <div className="flex items-center gap-16 mt-2">
             {rightIcons.map((item, i) => (
               <button 
                 key={i} 
                 onClick={() => handleNavClick(item.panelId)}
-                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, false)} ${activePanel === item.panelId ? 'text-[#C4A1FF]!' : ''}`}
+                className={`text-white/60 hover:text-white hover:scale-110 transition-all duration-300 flex flex-col items-center gap-1 group ${getTranslateY(i, false)}`}
               >
-                <item.icon className={`w-5 h-5 md:w-6 md:h-6 ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_10px_rgba(196,161,255,0.8)]' : 'group-hover:drop-shadow-[0_0_10px_rgba(155,109,255,0.8)]'}`} />
-                <span className="text-[8px] md:text-[10px] font-medium tracking-wider hidden sm:block">{item.label}</span>
+                <item.icon className={`w-6 h-6 ${activePanel === item.panelId ? 'text-[#C4A1FF] drop-shadow-[0_0_10px_rgba(196,161,255,0.8)]' : 'group-hover:drop-shadow-[0_0_10px_rgba(155,109,255,0.8)]'}`} />
+                <span className="text-[10px] font-medium tracking-wider">{item.label}</span>
               </button>
             ))}
           </div>
