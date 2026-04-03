@@ -50,7 +50,7 @@ function AIChatPanel({ isMobile = false }: { isMobile?: boolean }) {
           </div>
           <div>
             <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-white`}>SARVAR.GPT</h3>
-            <p className="text-[10px] text-[#C4A1FF]/70">Gemini 2.0 Flash</p>
+            <p className="text-[10px] text-[#C4A1FF]/70">Gemini 3.0 Flash</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

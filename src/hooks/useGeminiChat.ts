@@ -60,7 +60,7 @@ export function useGeminiChat() {
       }));
 
       const response = await ai.models.generateContentStream({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3.0-flash',
         contents: [
           { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
           { role: 'model', parts: [{ text: 'Tushundim! Men Sarvarning AI yordamchisiman. Yordam berishga tayyorman.' }] },
