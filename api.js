@@ -23,7 +23,10 @@ router.post('/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     const creds = await getCredentials();
-    if (username === creds.username && password === creds.password) {
+    const cleanUser = username?.trim();
+    const cleanPass = password?.trim();
+    
+    if (cleanUser === creds.username.trim() && cleanPass === creds.password.trim()) {
       res.json({ success: true });
     } else {
       res.status(401).json({ error: 'Login yoki parol noto\'g\'ri' });
@@ -42,7 +45,10 @@ const adminAuth = async (req, res, next) => {
   try {
     const [username, password] = Buffer.from(auth.split(' ')[1], 'base64').toString().split(':');
     const creds = await getCredentials();
-    if (username === creds.username && password === creds.password) {
+    const cleanUser = username?.trim();
+    const cleanPass = password?.trim();
+
+    if (cleanUser === creds.username.trim() && cleanPass === creds.password.trim()) {
       next();
     } else {
       res.status(401).json({ error: 'Unauthorized' });

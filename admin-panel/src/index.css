@@ -2,15 +2,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @theme {
-  --color-primary: #9B6DFF;
-  --color-primary-light: #C4A1FF;
-  --color-primary-dark: #7B61FF;
-  --color-accent: #00D1FF;
-  --color-surface: #0f0a1a;
-  --color-surface-light: #1a1128;
-  --color-surface-lighter: #251a36;
+  --color-primary: #00D1FF;
+  --color-primary-light: #70E7FF;
+  --color-primary-dark: #00A3C7;
+  --color-accent: #00FFCC;
+  --color-surface: #051015;
+  --color-surface-light: #0A1C24;
+  --color-surface-lighter: #102832;
   --color-danger: #FF4F6D;
-  --color-success: #00D68F;
+  --color-success: #00FFCC;
   --color-warning: #FFB547;
 }
 

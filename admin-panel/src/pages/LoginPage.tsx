@@ -19,7 +19,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     setLoading(true);
     setError('');
 
-    const success = await store.login(username, password);
+    const success = await store.login(username.trim(), password.trim());
     if (success) {
       onLogin();
     } else {
@@ -29,54 +29,60 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'radial-gradient(ellipse at 50% 30%, #1a0a2e 0%, #0a0515 60%, #050210 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse at 50% 30%, #051015 0%, #020810 100%)' }}>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
-          <motion.div key={i} className="absolute w-1 h-1 rounded-full bg-[#9B6DFF]"
+          <motion.div key={i} className="absolute w-1.5 h-1.5 rounded-full bg-[#00D1FF]"
             style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
-            animate={{ opacity: [0.2, 0.8, 0.2], scale: [1, 1.5, 1] }}
-            transition={{ duration: 3 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 3 }}
+            animate={{ opacity: [0.1, 0.5, 0.1], scale: [1, 2, 1] }}
+            transition={{ duration: 4 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 5 }}
           />
         ))}
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6 }} className="w-full max-w-md">
-        <div className="glass-card rounded-[32px] p-10 relative overflow-hidden">
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#9B6DFF]/20 rounded-full blur-[80px]" />
-          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#7B61FF]/15 rounded-full blur-[80px]" />
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
+        <div className="glass-card rounded-[40px] p-8 md:p-12 relative overflow-hidden border-white/5 bg-black/20 backdrop-blur-3xl">
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#00D1FF]/10 rounded-full blur-[80px]" />
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[#00FFCC]/10 rounded-full blur-[80px]" />
 
-          <div className="flex flex-col items-center mb-10 relative z-10">
-            <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity }} className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#7B61FF] to-[#9B6DFF] flex items-center justify-center mb-5 shadow-[0_0_40px_rgba(155,109,255,0.4)]">
-              <Shield className="w-10 h-10 text-white" />
+          <div className="flex flex-col items-center mb-12 relative z-10">
+            <motion.div 
+              animate={{ y: [0, -10, 0] }} 
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} 
+              className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#00D1FF] to-[#00FFCC] flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(0,209,255,0.4)]"
+            >
+              <Shield className="w-10 h-10 text-black" />
             </motion.div>
-            <h1 className="text-3xl font-black bg-gradient-to-r from-[#9B6DFF] via-[#C4A1FF] to-[#7B61FF] bg-clip-text text-transparent">SARVAR.GPT</h1>
-            <p className="text-white/40 text-sm mt-2">Admin Panel</p>
+            <h1 className="text-3xl font-black text-white tracking-widest">SARVAR.GPT</h1>
+            <div className="h-0.5 w-12 bg-gradient-to-r from-transparent via-[#00D1FF] to-transparent mt-3 opacity-50" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             <div>
-              <label className="text-white/50 text-xs font-medium mb-2 block uppercase tracking-wider">Login</label>
-              <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="input-field text-sm" placeholder="Username" required />
+              <label className="text-[#00D1FF] text-[10px] font-black uppercase tracking-[0.2em] mb-3 block opacity-70">Administrator Login</label>
+              <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="input-field text-sm bg-white/5 border-white/10 focus:border-[#00D1FF]/50" placeholder="Username" required />
             </div>
             <div>
-              <label className="text-white/50 text-xs font-medium mb-2 block uppercase tracking-wider">Parol</label>
+              <label className="text-[#00D1FF] text-[10px] font-black uppercase tracking-[0.2em] mb-3 block opacity-70">Security Password</label>
               <div className="relative">
-                <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="input-field text-sm pr-12" placeholder="Parol" required />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
+                <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="input-field text-sm pr-12 bg-white/5 border-white/10 focus:border-[#00D1FF]/50" placeholder="Password" required />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-[#00D1FF] transition-colors">
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
+            
             {error && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-[#FF4F6D] text-sm bg-[#FF4F6D]/10 px-4 py-3 rounded-xl border border-[#FF4F6D]/20">
-                <AlertCircle size={16} />{error}
+              <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 text-[#FF4F6D] text-xs bg-[#FF4F6D]/10 px-4 py-4 rounded-2xl border border-[#FF4F6D]/20 font-bold">
+                <AlertCircle size={14} />{error}
               </motion.div>
             )}
-            <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-4 text-base rounded-2xl disabled:opacity-50">
-              {loading ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full" /> : 'Kirish'}
+
+            <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-5 text-sm font-black uppercase tracking-widest rounded-2xl disabled:opacity-50 shadow-[0_0_30px_rgba(0,209,255,0.2)] hover:shadow-[0_0_40px_rgba(0,209,255,0.4)]">
+              {loading ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : 'Sistemaga Kirish'}
             </button>
           </form>
-          <p className="text-white/20 text-[10px] text-center mt-8 relative z-10">Default: admin / sarvar2024</p>
+          <p className="text-white/10 text-[9px] text-center mt-12 font-bold tracking-widest">SARVAR.GPT SECURE ACCESS v2.0</p>
         </div>
       </motion.div>
     </div>
