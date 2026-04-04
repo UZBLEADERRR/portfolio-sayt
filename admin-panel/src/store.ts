@@ -25,20 +25,20 @@ async function apiGet(key: string) {
 
 async function apiDelete(url: string) {
   try {
-    await fetch(url, {
-      method: 'DELETE',
-      headers: { 'Authorization': getAuthHeader() },
-    });
+    await fetch(url, { method: 'DELETE' });
   } catch (err) { console.error('Delete error:', err); }
 }
 
 async function apiSet(key: string, data: any) {
   try {
-    await fetch(`/api/data/${key}`, {
+    const res = await fetch(`/api/data/${key}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': getAuthHeader() },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) {
+      console.error(`Save failed for ${key}:`, res.status, await res.text());
+    }
   } catch (err) {
     console.error('Save error:', err);
   }

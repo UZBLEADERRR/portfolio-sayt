@@ -3,12 +3,13 @@ import { getData, setData, getCredentials, setCredentials, pool } from './db.js'
 
 const router = express.Router();
 
+// ===== Health Check =====
+router.get('/health', (req, res) => res.json({ status: 'ok', router: 'api' }));
+
 // ===== Public API (portfolio reads) =====
 const publicKeys = ['resume', 'projects', 'services', 'courses', 'blog', 'stats', 'socials', 'ai_settings'];
 
 // GET any section
-router.get('/health', (req, res) => res.json({ status: 'ok', router: 'api' }));
-
 router.get('/data/:key', async (req, res) => {
   try {
     if (!publicKeys.includes(req.params.key)) return res.status(404).json({ error: 'Not found' });
@@ -20,16 +21,13 @@ router.get('/data/:key', async (req, res) => {
   }
 });
 
-// ===== Auth =====
+// ===== Auth (kept for future use) =====
 router.post('/auth/login', async (req, res) => {
   console.log('📬 POST /api/auth/login received');
   try {
     const { username, password } = req.body;
     const creds = await getCredentials();
-    const cleanUser = username?.trim();
-    const cleanPass = password?.trim();
-    
-    if (cleanUser === creds.username.trim() && cleanPass === creds.password.trim()) {
+    if (username?.trim() === creds.username.trim() && password?.trim() === creds.password.trim()) {
       res.json({ success: true });
     } else {
       res.status(401).json({ error: 'Login yoki parol noto\'g\'ri' });
@@ -39,32 +37,12 @@ router.post('/auth/login', async (req, res) => {
   }
 });
 
-// ===== Admin API (write) =====
-// Simple auth check via header
-const adminAuth = async (req, res, next) => {
-  const auth = req.headers.authorization;
-  if (!auth) return res.status(401).json({ error: 'Unauthorized' });
-  
-  try {
-    const [username, password] = Buffer.from(auth.split(' ')[1], 'base64').toString().split(':');
-    const creds = await getCredentials();
-    const cleanUser = username?.trim();
-    const cleanPass = password?.trim();
-
-    if (cleanUser === creds.username.trim() && cleanPass === creds.password.trim()) {
-      next();
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
-  } catch {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
-};
-
-// SET any section (admin only)
-router.put('/data/:key', adminAuth, async (req, res) => {
+// ===== Admin API (write) — NO AUTH REQUIRED =====
+// SET any section
+router.put('/data/:key', async (req, res) => {
   try {
     if (!publicKeys.includes(req.params.key)) return res.status(404).json({ error: 'Not found' });
+    console.log(`📝 Saving data for key: ${req.params.key}`);
     await setData(req.params.key, req.body);
     res.json({ success: true });
   } catch (err) {
@@ -74,7 +52,7 @@ router.put('/data/:key', adminAuth, async (req, res) => {
 });
 
 // Update credentials
-router.put('/auth/credentials', adminAuth, async (req, res) => {
+router.put('/auth/credentials', async (req, res) => {
   try {
     const { username, password } = req.body;
     await setCredentials(username, password);
@@ -84,7 +62,7 @@ router.put('/auth/credentials', adminAuth, async (req, res) => {
   }
 });
 
-// ===== Messages API (public & admin) =====
+// ===== Messages API =====
 // Save message (public)
 router.post('/messages', async (req, res) => {
   try {
@@ -100,8 +78,8 @@ router.post('/messages', async (req, res) => {
   }
 });
 
-// Get all messages (admin only)
-router.get('/messages', adminAuth, async (req, res) => {
+// Get all messages
+router.get('/messages', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
     res.json(result.rows);
@@ -110,8 +88,8 @@ router.get('/messages', adminAuth, async (req, res) => {
   }
 });
 
-// Delete message (admin only)
-router.delete('/messages/:id', adminAuth, async (req, res) => {
+// Delete message
+router.delete('/messages/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM messages WHERE id = $1', [req.params.id]);
     res.json({ success: true });
@@ -120,7 +98,7 @@ router.delete('/messages/:id', adminAuth, async (req, res) => {
   }
 });
 
-// ===== AI Chat Proxy (server-side, keeps API key safe) =====
+// ===== AI Chat Proxy =====
 router.post('/chat', async (req, res) => {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -128,12 +106,10 @@ router.post('/chat', async (req, res) => {
 
     const { messages, userMessage } = req.body;
     
-    // Get AI settings from DB
     const aiSettings = await getData('ai_settings');
-    const basePrompt = aiSettings?.systemPrompt || 'Sen Sarvarning AI yordamchisishan.';
+    const basePrompt = aiSettings?.systemPrompt || 'Sen Sarvarning AI yordamchisisan.';
     const knowledgeBase = aiSettings?.knowledgeBase || '';
     
-    // Explicit instructions to avoid Markdown symbols and be more detailed
     const formatInstructions = `
 MUHIM KO'RSATMALAR:
 1. Javob berishda Markdown belgilaridan (**, ##, *, __) ASLO FOYDALANMA. 
@@ -155,7 +131,6 @@ MUHIM KO'RSATMALAR:
       { role: 'user', parts: [{ text: userMessage }] },
     ];
 
-    // Use Google GenAI REST API directly
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`,
       {
