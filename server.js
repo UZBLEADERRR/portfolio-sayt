@@ -13,6 +13,32 @@ const PORT = process.env.PORT || 3000;
 // Parse JSON
 app.use(express.json());
 
+// Request logger
+app.use((req, res, next) => {
+  console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Primary Auth Endpoint (direct mount for debugging)
+import { getCredentials } from './db.js';
+app.post('/api/auth/login', async (req, res) => {
+  console.log('📬 [CRITICAL] Main server heard POST /api/auth/login');
+  try {
+    const { username, password } = req.body;
+    const creds = await getCredentials();
+    const cleanUser = username?.trim();
+    const cleanPass = password?.trim();
+    if (cleanUser === creds.username.trim() && cleanPass === creds.password.trim()) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ error: 'Login yoki parol noto\'g\'ri' });
+    }
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // API routes
 console.log('✅ Attaching API router to /api');
 app.use('/api', apiRouter);
