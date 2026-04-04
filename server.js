@@ -14,7 +14,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // API routes
+console.log('✅ Attaching API router to /api');
 app.use('/api', apiRouter);
+
+// Health check
+app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
 // Serve admin panel
 app.use('/admin-panel', express.static(path.join(__dirname, 'dist', 'admin-panel')));

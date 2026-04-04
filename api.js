@@ -7,6 +7,8 @@ const router = express.Router();
 const publicKeys = ['resume', 'projects', 'services', 'courses', 'blog', 'stats', 'socials', 'ai_settings'];
 
 // GET any section
+router.get('/health', (req, res) => res.json({ status: 'ok', router: 'api' }));
+
 router.get('/data/:key', async (req, res) => {
   try {
     if (!publicKeys.includes(req.params.key)) return res.status(404).json({ error: 'Not found' });
@@ -20,6 +22,7 @@ router.get('/data/:key', async (req, res) => {
 
 // ===== Auth =====
 router.post('/auth/login', async (req, res) => {
+  console.log('📬 POST /api/auth/login received');
   try {
     const { username, password } = req.body;
     const creds = await getCredentials();
