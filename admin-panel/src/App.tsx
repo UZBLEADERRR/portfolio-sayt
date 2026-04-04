@@ -8,12 +8,7 @@ import { ProjectsManager, ServicesManager, CoursesManager, BlogManager, StatsMan
 import { AISettingsPage, ChatHistoryPage } from './pages/AIPages';
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState(store.isAuthenticated());
   const [activePage, setActivePage] = useState('dashboard');
-
-  if (!isAuth) {
-    return <LoginPage onLogin={() => setIsAuth(true)} />;
-  }
 
   const pages: Record<string, React.ReactNode> = {
     'dashboard': <Dashboard />,
@@ -33,7 +28,7 @@ export default function App() {
     <Layout
       activePage={activePage}
       onNavigate={setActivePage}
-      onLogout={() => { store.setAuth(false); setIsAuth(false); }}
+      onLogout={() => { window.location.reload(); }}
     >
       {pages[activePage] || <Dashboard />}
     </Layout>
